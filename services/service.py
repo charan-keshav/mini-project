@@ -45,3 +45,14 @@ class Service:
         """Retrieve all inventory items"""
         await self.repo.init_db()
         return await self.repo.list()
+
+    async def create_supplier(self, supplier):
+        """Create a new supplier record"""
+        await self.repo.init_db()
+        await self.repo.insert_supplier(supplier)
+        return supplier
+
+    async def get_all_suppliers(self):
+        """Retrieve all suppliers"""
+        await self.repo.init_db()
+        return await self.repo.list_suppliers()

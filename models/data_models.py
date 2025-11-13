@@ -3,6 +3,16 @@ from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 
 
+class Supplier(BaseModel):
+    model_config = ConfigDict(
+        json_encoders={datetime: lambda dt: dt.isoformat()})
+    id: str
+    name: str
+    contact_person: Optional[str] = None
+    phone_number: Optional[str] = None
+    category: Optional[str] = None
+    address: Optional[str] = None
+
 class InventoryItem(BaseModel):
     model_config = ConfigDict(
         json_encoders={datetime: lambda dt: dt.isoformat()})

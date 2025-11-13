@@ -5,7 +5,7 @@ from services.service import Service
 from routers import inventory
 from repos.repo import Repo
 from constants import DB_NAME
-
+from agent.simple_agent import simple_agent
 
 repo = Repo(DB_NAME)
 service = Service(repo)
@@ -37,6 +37,6 @@ app = get_fast_api_app(
 app.include_router(inventory.router, prefix="/inventory", tags=["Inventory"])
 
 if __name__ == "__main__":
-    # Use the PORT environment variable provided by Cloud Run, defaulting to 8080
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    # Use the PORT environment variable provided by Cloud Run, defaulting to 8081
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8081)))
     

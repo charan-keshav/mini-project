@@ -10,7 +10,7 @@ class Repo:
         self.db_path = db_path
 
     async def init_db(self):
-        """Initialize the inventory table if it doesn't exist."""
+        """Initialize the inventory and supplier tables if they don't exist."""
         async with aiosqlite.connect(self.db_path) as db:
             await db.execute(f"""
                 CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
@@ -22,6 +22,16 @@ class Repo:
                     supplier TEXT,
                     unit_price REAL NOT NULL,
                     last_updated TEXT
+                )
+            """)
+            await db.execute("""
+                CREATE TABLE IF NOT EXISTS Suppliers (
+                    id TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    contact_person TEXT,
+                    phone_number TEXT,
+                    category TEXT,
+                    address TEXT
                 )
             """)
             await db.commit()
@@ -119,3 +129,22 @@ class Repo:
             ))
             await db.commit()
             return cursor.rowcount > 0
+
+    async def insert_supplier(self, supplier):
+        """Insert a new supplier record."""
+        async with aiosqlite.connect(self.db_path) as db:
+            await db.execute("""
+                INSERT INTO Suppliers (id, name, contact_person, phone_number, category, address)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (supplier.id, supplier.name, supplier.contact_person, supplier.phone_number, supplier.category, supplier.address))
+            await db.commit()
+
+    async def list_suppliers(self):
+        """List all suppliers."""
+        async with aiosqlite.connect(self.db_path) as db:
+            cursor = await db.execute("SELECT id, name, contact_person, phone_number, category, address FROM Suppliers")
+            rows = await cursor.fetchall()
+            return [{
+                "id": row[0], "name": row[1], "contact_person": row[2],
+                "phone_number": row[3], "category": row[4], "address": row[5]
+            } for row in rows]
